@@ -95,24 +95,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
 		float Frequency = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
+		float Lacunarity = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
+		float Amplitude = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
+		float Persistence = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
 		float HeightFalloff = 400.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Fm1 = 0.31;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Fm2 = 2.1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
 		float Angle = 90.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Am1 = 33.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Am2 = -33.0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Om0 = 0.4;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Om1 = 0.3;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
-		float Om2 = 0.3;
-
 
 //	FastNoise myNoise; // Create a FastNoise object
 

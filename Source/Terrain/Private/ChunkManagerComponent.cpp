@@ -19,15 +19,9 @@ UChunkManagerComponent::UChunkManagerComponent(const FObjectInitializer& ObjectI
 
 
 void UChunkManagerComponent::Init(
-	uint8 chunk_size, 
-	uint16 block_size, 
-	FIntVector world_size, 
-	float world_floor, 
-	float world_ceil, 
-	float height_falloff,
-	float frequency, float fm1, float fm2,
-	float angle, float am1, float am2, 
-	float om0, float om1, float om2
+	uint8 chunk_size, uint16 block_size, FIntVector world_size,
+	float world_floor, float world_ceil, float height_falloff, float angle,
+	float amplitude, float persistence, float frequency, float lacunarity
 ) {
 	m_ChunkSize = chunk_size;
 	m_BlockSize = block_size;
@@ -38,17 +32,11 @@ void UChunkManagerComponent::Init(
 	// noise params
 	HeightFalloff = height_falloff;
 
+	Amplitude = amplitude;
+	Persistence = persistence;
 	Frequency = frequency / 100000.0f;
+	Lacunarity = lacunarity;
 	Angle = angle;
-	Om0 = om0;
-	
-	Fm1 = fm1;
-	Am1 = am1;
-	Om1 = om1;
-
-	Fm2 = fm2;
-	Am2 = am2;
-	Om2 = om2;
 
 	m_Chunks.Empty();
 
@@ -122,11 +110,17 @@ void UChunkManagerComponent::CreateChunk(FIntVector location)
 				//FVector pos = world_loc + FVector(x, y, z); * FVector(m_BlockSize);
 				FVector pos = world_loc + FVector(x, y, z) * FVector(m_BlockSize);
 				
-				float noise2 =	srdnoise2(pos.X, pos.Y, Frequency, Angle, nullptr, nullptr) * Om0 +
-								srdnoise2(pos.X, pos.Y, Frequency * Fm1, Angle + Am1, nullptr, nullptr) * Om1 +
-								srdnoise2(pos.X, pos.Y, Frequency * Fm2, Angle - Am2, nullptr, nullptr) * Om2;
-				noise2 /= Om0 + Om1 + Om2;
-				double noise_val = ((noise2 * HeightFalloff + HeightFalloff / 1.5) - pos.Z) / HeightFalloff;
+				double noise_val = 0.0;
+				for (int octave = 0; octave < 4; octave++) {
+					noise_val += srdnoise2(pos.X, pos.Y, Frequency * FMath::Pow(Lacunarity, octave), Angle, nullptr, nullptr) * (Amplitude * FMath::Pow(Persistence, octave));
+				}
+
+				noise_val = ((noise_val * HeightFalloff + HeightFalloff / 1.5) - pos.Z) / HeightFalloff;
+				//float noise2 =	srdnoise2(pos.X, pos.Y, Frequency, Angle, nullptr, nullptr) * Om0 +
+				//				srdnoise2(pos.X, pos.Y, Frequency * Fm1, Angle + Am1, nullptr, nullptr) * Om1 +
+				//				srdnoise2(pos.X, pos.Y, Frequency * Fm2, Angle - Am2, nullptr, nullptr) * Om2;
+				//noise2 /= Om0 + Om1 + Om2;
+				//double noise_val = ((noise2 * HeightFalloff + HeightFalloff / 1.5) - pos.Z) / HeightFalloff;
 
 				//double noise_val = srdnoise3(pos.X, pos.Y, pos.Z, Frequency / 10000.0f, Angle, nullptr, nullptr, nullptr) / 2.0f + 0.5f;
 				//double noise_val = FMath::Sin(pos.X) + FMath::Sin(pos.Y) + FMath::Sin(pos.Z);

@@ -42,11 +42,10 @@ ATerrainActor::ATerrainActor()
 void ATerrainActor::OnConstruction(const FTransform& Transform)
 {
 	m_TerrainMeshComponent->ClearAllMeshSections();
-	m_ChunkManagerComponent->Init(ChunkSize, BlockSize, FIntVector({ WorldSizeX, WorldSizeY, WorldSizeZ }), 
-		WorldFloor, WorldCeil, HeightFalloff,
-		Frequency, Fm1, Fm2,
-		Angle, Am1, Am2,
-		Om0, Om1, Om2
+	m_ChunkManagerComponent->Init(
+		ChunkSize, BlockSize, FIntVector({ WorldSizeX, WorldSizeY, WorldSizeZ }), 
+		WorldFloor, WorldCeil, HeightFalloff, Angle,
+		Amplitude, Persistence, Frequency, Lacunarity
 	);
 	//myNoise.SetFrequency(Frequency);
 	auto chunks = m_ChunkManagerComponent->GetChunksAroundCamera(CameraLocation, CameraChunkRadius);

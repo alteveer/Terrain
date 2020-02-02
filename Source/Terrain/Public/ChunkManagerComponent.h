@@ -25,13 +25,9 @@ public:
 		uint8 chunk_size,
 		uint16 block_size,
 		FIntVector world_size,
-		float world_floor,
-		float world_ceil,
-		float height_falloff,
-		float frequency, float fm1, float fm2,
-		float angle, float am1, float am2,
-		float om0, float om1, float om2
-	);
+		float world_floor, float world_ceil, float height_falloff, float angle,
+		float amplitude, float persistence, float frequency, float lacunarity
+		);
 
 	TArray<UChunk*> GetChunksAroundCamera(FVector cam_location, uint8 camera_chunk_radius);
 	
@@ -41,16 +37,13 @@ public:
 	FIntVector WorldToChunkLocation(FVector loc);
 	const GRIDCELL GetGridcell(FIntVector chunk_xyz, FIntVector gridcell_xyz);
 
-	float Frequency = 0.001;
-	float Fm1 = 0.31;
-	float Fm2 = 2.1;
-	float Angle = 90.0;
-	float Am1 = 33.0;
-	float Am2 = -33.0;
-	float Om0 = 0.4;
-	float Om1 = 0.3;
-	float Om2 = 0.3;
 	float HeightFalloff = 400.0;
+	float Angle = 90.0;
+
+	float Amplitude = 200.0;
+	float Persistence = 0.5;
+	float Frequency = 0.001;
+	float Lacunarity = 2.0;
 
 protected:
 	// Called when the game starts
