@@ -52,7 +52,8 @@ public:
 
 
 protected:
-	void DrawChunk(UChunk & chunk, uint16 mesh_section);
+	void UpdateChunkStreaming();
+	void DrawChunk(UChunk & chunk, int32 section);
 	void MarchCube(GRIDCELL cell, FTerrainVertexData & vdata);
 	void CreateQuad(ECubeside side, FVector pos, FTerrainVertexData& vdata);
 	// Called when the game starts or when spawned
@@ -104,7 +105,9 @@ protected:
 		float HeightFalloff = 400.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Terrain")
 		float Angle = 90.0;
-
+	UPROPERTY()
+		int32 mesh_section = 0;
+	TMap<FIntVector, int32> m_MeshSectionLookup;
 //	FastNoise myNoise; // Create a FastNoise object
 
 public:

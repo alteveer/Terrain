@@ -111,7 +111,7 @@ void UChunkManagerComponent::CreateChunk(FIntVector location)
 				FVector pos = world_loc + FVector(x, y, z) * FVector(m_BlockSize);
 				
 				double noise_val = 0.0;
-				for (int octave = 0; octave < 4; octave++) {
+				for (int octave = 0; octave < 6; octave++) {
 					noise_val += srdnoise2(pos.X, pos.Y, Frequency * FMath::Pow(Lacunarity, octave), Angle, nullptr, nullptr) * (Amplitude * FMath::Pow(Persistence, octave));
 				}
 
@@ -122,7 +122,7 @@ void UChunkManagerComponent::CreateChunk(FIntVector location)
 				//noise2 /= Om0 + Om1 + Om2;
 				//double noise_val = ((noise2 * HeightFalloff + HeightFalloff / 1.5) - pos.Z) / HeightFalloff;
 
-				//double noise_val = srdnoise3(pos.X, pos.Y, pos.Z, Frequency / 10000.0f, Angle, nullptr, nullptr, nullptr) / 2.0f + 0.5f;
+				//double noise_val = srdnoise3(pos.X, pos.Y, pos.Z, Frbequency / 10000.0f, Angle, nullptr, nullptr, nullptr) / 2.0f + 0.5f;
 				//double noise_val = FMath::Sin(pos.X) + FMath::Sin(pos.Y) + FMath::Sin(pos.Z);
 				//noise_val /= 3.0f;
 				//noise_val = noise_val / 2.0f + 0.5f;

@@ -33,6 +33,7 @@ ATerrainActor::ATerrainActor()
 #else
 	m_TerrainMeshComponent->bGenerateOverlapEvents = false;
 #endif
+	m_TerrainMeshComponent->ClearAllMeshSections();
 
 	m_ChunkManagerComponent = CreateDefaultSubobject<UChunkManagerComponent>(TEXT("ChunkMan0"));
 	RootComponent = m_TerrainMeshComponent;
@@ -41,22 +42,42 @@ ATerrainActor::ATerrainActor()
 }
 void ATerrainActor::OnConstruction(const FTransform& Transform)
 {
-	m_TerrainMeshComponent->ClearAllMeshSections();
 	m_ChunkManagerComponent->Init(
-		ChunkSize, BlockSize, FIntVector({ WorldSizeX, WorldSizeY, WorldSizeZ }), 
+		ChunkSize, BlockSize, FIntVector({ WorldSizeX, WorldSizeY, WorldSizeZ }),
 		WorldFloor, WorldCeil, HeightFalloff, Angle,
 		Amplitude, Persistence, Frequency, Lacunarity
 	);
 	//myNoise.SetFrequency(Frequency);
+	UpdateChunkStreaming();
+}
+void ATerrainActor::UpdateChunkStreaming()
+{
 	auto chunks = m_ChunkManagerComponent->GetChunksAroundCamera(CameraLocation, CameraChunkRadius);
-	uint16 mesh_section = 0;
+	TArray<FIntVector> resident_chunks;
+	
 	for (const auto &chunk : chunks)
 	{
-		DrawChunk(*chunk, mesh_section);
-		mesh_section++;
+		FIntVector loc = (*chunk).location();
+		if (!m_MeshSectionLookup.Contains(loc))
+		{
+			m_MeshSectionLookup.Add(loc, mesh_section);
+			DrawChunk(*chunk, mesh_section);
+			mesh_section++;
+		}
+		resident_chunks.Add(loc);
 	}
+
+	for (auto it = m_MeshSectionLookup.CreateIterator(); it; ++it)
+	{
+		if(!resident_chunks.Contains(it->Key))
+		{
+			m_TerrainMeshComponent->ClearMeshSection(it->Value);
+			it.RemoveCurrent();
+		}
+	}
+	
 }
-void ATerrainActor::DrawChunk(UChunk & chunk, uint16 mesh_section)
+void ATerrainActor::DrawChunk(UChunk & chunk, int32 section)
 {
 	FTerrainVertexData vertex_data = FTerrainVertexData();
 	//FVector chunk_offset = FVector(
@@ -85,13 +106,13 @@ void ATerrainActor::DrawChunk(UChunk & chunk, uint16 mesh_section)
 	//	mesh_section, *chunk.world_location().ToString(), *chunk.location().ToString(), vertex_data.Vertices.Num());
 
 	//uint8 section_index = chunk_pos_y * WorldSize + chunk_pos_x;
-	m_TerrainMeshComponent->ClearMeshSection(mesh_section);
+	m_TerrainMeshComponent->ClearMeshSection(section);
 	m_TerrainMeshComponent->GetOrCreateRuntimeMesh()->CreateMeshSection(
-		mesh_section, 
+		section, 
 		vertex_data.Vertices, vertex_data.Triangles, vertex_data.Normals, 
 		vertex_data.TextureCoordinates, vertex_data.VertexColors, vertex_data.Tangents, true);
 
-	m_TerrainMeshComponent->GetOrCreateRuntimeMesh()->SetSectionMaterial(mesh_section, DefaultMaterial);
+	m_TerrainMeshComponent->GetOrCreateRuntimeMesh()->SetSectionMaterial(section, DefaultMaterial);
 }
 void ATerrainActor::MarchCube(GRIDCELL cell, FTerrainVertexData & vdata)
 {
