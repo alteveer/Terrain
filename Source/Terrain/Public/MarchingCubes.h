@@ -1,5 +1,9 @@
 #pragma once
-#include "Math.h"
+
+
+#include "CoreMinimal.h"
+
+#include "Math/UnrealMathUtility.h"
 
 typedef struct {
 	FVector p[3];

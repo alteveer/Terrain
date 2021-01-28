@@ -69,7 +69,7 @@ FIntVector UChunkManagerComponent::WorldToChunkLocation(FVector loc)
 }
 UChunk * UChunkManagerComponent::GetOrCreateChunk(uint16 xx, uint16 yy, uint16 zz)
 {
-	return GetOrCreateChunk(FIntVector({ xx, yy, zz }));
+	return GetOrCreateChunk(FIntVector( xx, yy, zz ));
 }
 UChunk * UChunkManagerComponent::GetOrCreateChunk(FIntVector location)
 {
